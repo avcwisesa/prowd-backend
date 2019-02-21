@@ -147,7 +147,7 @@ func main() {
 		}
 
 		ctx.JSON(200, profile)
-	})
+	}) 
 
 	router.Run(":" + port)
 }
