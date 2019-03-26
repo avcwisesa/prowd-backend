@@ -19,6 +19,7 @@ import (
 type profile struct {
 	gorm.Model
 	Name       string `json:"name"`
+	Author     string `json:"author"`
 	Class      string `json:"class"`      // JSON string containing name and code for class
 	Filters    string `json:"filters"`    // JSON string containing list of filters, a filter got name and code
 	Facets     string `json:"facets"`     // JSON string containing list of facets, a facet got name and code
@@ -147,7 +148,7 @@ func main() {
 		}
 
 		ctx.JSON(200, profile)
-	}) 
+	})
 
 	router.Run(":" + port)
 }
@@ -180,6 +181,7 @@ func createProfile(client *gorm.DB, newProfile profile) (profile, error) {
 	if err := client.Where(&profile{Name: newProfile.Name}).First(&profile{}).Error; err != nil {
 		client.Create(&profile{
 			Name:       newProfile.Name,
+			Author:     newProfile.Author,
 			Class:      newProfile.Class,
 			Facets:     newProfile.Facets,
 			Attributes: newProfile.Attributes,
@@ -199,12 +201,13 @@ func updateProfile(client *gorm.DB, id uint, newProfile profile) (profile, error
 		return profile{}, err
 	}
 
-	oldProfile.Name =       newProfile.Name
-	oldProfile.Class =      newProfile.Class
-	oldProfile.Facets =     newProfile.Facets
+	oldProfile.Name = newProfile.Name
+	oldProfile.Author = newProfile.Author
+	oldProfile.Class = newProfile.Class
+	oldProfile.Facets = newProfile.Facets
 	oldProfile.Attributes = newProfile.Attributes
-	oldProfile.Subclass =   newProfile.Subclass
-	oldProfile.Filters =    newProfile.Filters
+	oldProfile.Subclass = newProfile.Subclass
+	oldProfile.Filters = newProfile.Filters
 
 	if err := client.Save(&oldProfile).Error; err != nil {
 		return profile{}, err
